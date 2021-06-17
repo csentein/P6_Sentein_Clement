@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken"); // Importation du plugin "jsnwebtoken" pour le système de token
-// require('dotenv').config(); // dotenv permet de copier les variables d'environnement dans un fichier externe .env. Dans notre cas, nous n'avons pas de variable  d'environnement  (le port utilisé est 4200)
+// require('dotenv').config(); // dotenv permet de copier les variables d'environnement dans un fichier externe .env. Dans notre cas, nous n'avons pas de variable d'environnement (le port utilisé est 4200).
 
 // Début comparaison du token envoyé dans la requête de l'utilisateur avec celui contenu dans la BDD
 module.exports = (req, res, next) => {
@@ -11,14 +11,20 @@ module.exports = (req, res, next) => {
         var userId = decodedToken.userId; // Récupération du UserID dans l'objet "decodedToken" (qui est le token au format JSON envoyé par la requête)
 
         if (userId == null) { // Si userId est null, alors on stop l'exécution du script et on envoie un message d'erreur "UserID invalide" dans la console
-            throw "UserID invalide";
-        } else {
+            throw "UserID manquant";
+        }
+
+        else if (req.body.userId && req.body.userId !== userId) {
+            throw "UserID non valable";
+        }
+
+        else {
             next();
         }
 
     } else {
         res.status(401).json({
-            error: Error.message = 'Requête invalide'
+            error: error | 'Requête non authentifiée !'
         });
     }
 };

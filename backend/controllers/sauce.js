@@ -1,17 +1,14 @@
 // Les controllers contiennent la logique métier
 
 const Sauce = require("../models/Sauce"); // Importation du model "Sauce" (schéma mongoose)
-const fs = require("fs"); // Plugin permettant de modifier ou supprimer des fichiers contenus dans le serveur (dans le dossier backend)
+const fs = require("fs"); // Plugin "files systems" permettant de modifier ou supprimer des fichiers contenus dans le serveur (dans le dossier backend)
 
+// Début creation d'une sauce
 exports.createSauce = (req, res, next) => { // La méthode "exports" nous permet de récupérer uniquement l'exportation de "createSauce" lorsqu'on utilisera la méthode "require" depuis un fichier externe
     const sauceObject = JSON.parse(req.body.sauce); // Conversion du Body de la requête au format JSON (objet) utilisable
-
-    // Début creation d'une sauce
     const sauce = new Sauce({
         ...sauceObject, // L'opérateur "spread (...)" permet, dans ce cas d'utilisation, de faire une copie de la valeur "sauceObject" et de l'attribuer à la constance "sauce"
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${ // Génération de l'URL type : http://localhost/images/nomfichier
-            req.file.filename
-            }`,
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`, // Génération de l'URL type : http://localhost/images/nomfichier           
         likes: 0,
         dislikes: 0,
         usersLiked: [],
@@ -34,12 +31,10 @@ exports.createSauce = (req, res, next) => { // La méthode "exports" nous permet
 // Début modification d'une sauce
 exports.putSauce = (req, res, next) => { // La méthode "exports" nous permet de récupérer uniquement l'exportation de "putSauce" lorsqu'on utilisera la méthode "require" depuis un fichier externe
 
-    const sauceObject = req.file ? // Si un fichier existe (grâce au "?"), alors on copie la sauce générée par l'utilisateur (convertie au format JSON) et on attribue cette valeur à la constance "sauceObject"
+    const sauceObject = req.file ? // Si un fichier existe (grâce à l'opérateur ternaire : "?"), alors on copie la sauce générée par l'utilisateur (convertie au format JSON) et on attribue cette valeur à la constance "sauceObject"
         { // Un fichier image a été uploadé ->
             ...JSON.parse(req.body.sauce), // Conversion de la sauce reçue au format Object
-            imageUrl: `${req.protocol}://${req.get("host")}/images/${ // Récupération de l'URL de l'image envoyée par la sauce crée par l'utilisateur
-                req.file.filename
-                }`,
+            imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`, // Génération de l'URL type : http://localhost/images/nomfichier
         } : // Aucun fichier image n'a été uploadé ->
         {
             ...req.body // Si aucun fichier n'a été uploadé pour la mise à jour de la sauce, alors on ne copie que le corps de la requête (qui modifiera l'ancienne sauce)
@@ -69,7 +64,7 @@ exports.deleteSauce = (req, res, next) => {
     })
         .then(sauce => {
             const filename = sauce.imageUrl.split("/images/")[1]; // Récupération du nom du fichier (grâce à la méthode "Split", on divise l'URL en 2 et on récupère la deuxième partie de l'URL, soit le nom du fichier)
-            fs.unlink(`images/${filename}`, () => { // Suppression du fichier grâce à la méthode "Unlink"
+            fs.unlink(`images/${filename}`, () => { // Suppression du fichier grâce à la fonction "Unlink"
                 Sauce.deleteOne({ // Suppression de la ligne de la table "Sauce" de la BDD
                     _id: req.params.id
                 })
@@ -123,7 +118,6 @@ exports.likeSauce = (req, res, next) => {
             $push: {
                 usersLiked: req.body.userId // Ajout de l'userID de l'utilisateur ayant liké la sauce au tableau "userLiked"
             }
-
         })
             .then(() => res.status(200).json({ message: 'Un like de plus !' }))
             .catch(error => res.status(400).json({ error }));

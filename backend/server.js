@@ -1,4 +1,4 @@
-const http = require('http'); // Importation du package "http" permettant de créer le serveur http
+const http = require('http'); // Importation du package "http" permettant de créer un serveur http
 const app = require('./app');
 
 const normalizePort = val => {
@@ -13,7 +13,7 @@ const normalizePort = val => {
     return false;
 };
 
-const port = normalizePort(3000); // Attribution du port 3000
+const port = normalizePort(3000); // Attribution du port 3000. NormalizePort permet simplement de vérifier si le type du port est un number
 app.set('port', port);
 
 // Début traitement de potentielles erreurs

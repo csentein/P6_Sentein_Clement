@@ -1,3 +1,5 @@
+// Le fichier app.js gère toutes les requêtes envoyées au serveur (même les requêtes de fichiers, etc.)
+
 const express = require('express'); // Importation du framework Express (permettant de simplifier la configuration d'un serveur avec NodeJS)
 const bodyParser = require('body-parser'); // Importation du package BodyParser permettant d'extraire les corps de requête pour avoir accès aux variables des requêtes (req.body) (Extrait Objet -> Format JSON)
 const mongoose = require('mongoose'); // Importation du package mongoose permettant la connection à la Base de donnée (mongoDB)
@@ -17,6 +19,7 @@ app.use((req, res, next) => { // Middleware permettant d'ajouter des entêtes HT
 
 // Début Connection à la Base de donnée MongoDB
 mongoose.connect('mongodb+srv://admin:15022001@cluster0.hc0cs.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+    // mongoose.connect('mongodb+srv://admin:Azerty123@cluster0.hc0cs.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
